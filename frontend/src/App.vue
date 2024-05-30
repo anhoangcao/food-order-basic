@@ -30,10 +30,15 @@ export default {
 
 .content {
   flex: 1;
-  padding: 30px 20px 20px 20px;
-  width: 1091px;
-  margin: 0 0 0 136px;
-  background-color: #e8ecf0;
+  padding: 20px;
+  margin-left: 154px;
+  background-color: #f9f9f9;
 }
 
+/* Responsive Design Enhancements */
+@media (max-width: 768px) {
+  .content {
+    margin-left: 0;
+  }
+}
 </style>

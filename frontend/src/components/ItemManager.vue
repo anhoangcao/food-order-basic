@@ -6,20 +6,24 @@
       <input type="text" v-model="price" placeholder="Price" />
       <input type="text" v-model="available" placeholder="Available" />
       <button type="submit" class="btn search-btn">Search</button>
-      <button @click="addItem" class="btn add-btn">Add Item</button>
     </form>
+    <button @click="addItem" class="btn add-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="add-icon">
+        <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
+      Add Item
+    </button>
     <table>
       <thead>
         <tr>
           <th><input type="checkbox" /></th>
-          <th class="col1">Item ID</th>
-          <th class="col2">Item Name</th>
+          <th class="col1">ItemID</th>
+          <th class="col2">ItemName</th>
           <th class="col3">Description</th>
           <th class="col4">Price</th>
           <th class="col5">Available</th>
           <th class="col6">ImageUrl</th>
-          <th class="col7">Updated At</th>
-          <th class="col8">Created At</th>
+          <th class="col7">UpdatedAt</th>
+          <th class="col8">CreatedAt</th>
           <th class="col9">Actions</th>
         </tr>
       </thead>
@@ -78,7 +82,6 @@
   </div>
 </template>
 
-
 <script>
 export default {
   name: 'ItemManager',
@@ -89,7 +92,7 @@ export default {
       price: '',
       available: '',
       items: [
-        { id: 1, name: 'Hamburger', description: 'Ngon bổ rẻ, ngon rẻ bổ ngon ngon quá', price: 200, available: 'Yes', image: 'D:\\TTTT\\frontend\\cd\\tt\\image', updatedAt: '11:08am 5/30/2024', createdAt: '11:08am 5/30/2024' },
+      { id: 1, name: 'Hamburger', description: 'Ngon bổ rẻ, ngon rẻ bổ ngon ngon quá', price: 200, available: 'Yes', image: 'D:\\TTTT\\frontend\\cd\\tt\\image', updatedAt: '11:08am 5/30/2024', createdAt: '11:08am 5/30/2024' },
         { id: 2, name: 'hamburger', description: 'Ngon bổ rẻ', price: 200, available: 'Yes', image: 'url', updatedAt: 'auto', createdAt: 'auto' },
         { id: 3, name: 'hamburger', description: 'Ngon bổ rẻ', price: 200, available: 'Yes', image: 'url', updatedAt: 'auto', createdAt: 'auto' },
         { id: 4, name: 'hamburger', description: 'Ngon bổ rẻ', price: 200, available: 'Yes', image: 'url', updatedAt: 'auto', createdAt: 'auto' },
@@ -125,12 +128,10 @@ export default {
         { id: 4, name: 'hamburger', description: 'Ngon bổ rẻ', price: 200, available: 'Yes', image: 'url', updatedAt: 'auto', createdAt: 'auto' },
         { id: 5, name: 'hamburger', description: 'Ngon bổ rẻ', price: 200, available: 'Yes', image: 'url', updatedAt: 'auto', createdAt: 'auto' },
         { id: 1, name: 'hamburger', description: 'Ngon bổ rẻ', price: 200, available: 'Yes', image: 'url', updatedAt: 'auto', createdAt: 'auto' },
-        { id: 2, name: 'hamburger', description: 'Ngon bổ rẻ', price: 200, available: 'Yes', image: 'url', updatedAt: 'auto', createdAt: 'auto' },
-        { id: 3, name: 'hamburger', description: 'Ngon', price: 200, available: 'Yes', image: 'url', updatedAt: 'auto', createdAt: 'auto' },
-
-      ],
+      
+      ], // Assuming data will be fetched or set elsewhere
       currentPage: 1,
-      itemsPerPage: 10
+      itemsPerPage: 9
     };
   },
   computed: {
@@ -166,6 +167,7 @@ export default {
 <style scoped>
 .item-manager {
   margin-top: 20px;
+  width: 1054px;
 }
 
 .form-inline {
@@ -182,6 +184,11 @@ input {
   flex: 1;
 }
 
+input:focus {
+  outline: none;
+  border-color: #ff7f00;
+}
+
 button {
   padding: 8px 12px;
   border: none;
@@ -196,6 +203,10 @@ button {
 
 .search-btn {
   background-color: #007bff;
+}
+
+.search-btn:hover {
+  background-color: #419bfc;
 }
 
 td button.action-button {
@@ -240,7 +251,25 @@ td button.action-button:hover {
 
 .add-btn {
   background-color: #28a745;
+  color: #ffffff;
+  margin: 0 0 10px 0;
+  float: right;
+  display: flex;
+  align-items: center;
 }
+
+.add-btn:hover {
+  background-color: #4fad64;
+
+}
+
+.add-icon {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  fill: #ffffff;
+}
+
 
 table {
   width: 100%;
@@ -273,6 +302,8 @@ thead {
 
 th {
   font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #ccc;
 }
 
 /* Định nghĩa chiều rộng cho từng cột */
@@ -355,8 +386,8 @@ th {
 
 .pagination button.active,
 .pagination span.active {
-  background-color: #e6f0ff;
-  border-color: #0066cc;
+  background-color: #ffd6ad;
+  border-color: #ff7f00;
 }
 
 .pagination button:hover:not(:disabled),
