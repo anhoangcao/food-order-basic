@@ -1,9 +1,14 @@
 <template>
-  <div id="app">
-    <Sidebar />
+  <div id="app" class="app-container">
+    <Sidebar @updatePage="updatePage" />
     <div class="content">
-      <Header />
-      <ItemManager />
+      <header>
+        <h1 v-if="currentPage !== 'Items'">{{ currentPage }}</h1>
+        <Header v-else />
+      </header>
+      <div class="body-content">
+        <component :is="currentComponent"></component>
+      </div>
     </div>
   </div>
 </template>
@@ -12,33 +17,50 @@
 import Sidebar from './components/Sidebar.vue';
 import Header from './components/Header.vue';
 import ItemManager from './components/ItemManager.vue';
+import NotFound from './components/NotFound.vue';
 
 export default {
   name: 'App',
   components: {
     Sidebar,
     Header,
-    ItemManager
+    ItemManager,
+    NotFound
+  },
+  data() {
+    return {
+      currentPage: 'Items'
+    };
+  },
+  computed: {
+    currentComponent() {
+      return this.currentPage === 'Items' ? 'ItemManager' : 'NotFound';
+    }
+  },
+  methods: {
+    updatePage(page) {
+      this.currentPage = page;
+    }
   }
 };
 </script>
 
 <style>
-#app {
+.app-container {
   display: flex;
+  height: 100vh;
 }
 
 .content {
   flex: 1;
-  padding: 20px;
-  margin-left: 154px;
-  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Responsive Design Enhancements */
-@media (max-width: 768px) {
-  .content {
-    margin-left: 0;
-  }
+.body-content {
+  flex: 1;
+  padding: 1rem;
+  background: #fff;
+  overflow-y: auto;
 }
 </style>

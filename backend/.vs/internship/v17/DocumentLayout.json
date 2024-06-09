@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\TTTT\\vhec_internship2024_dev4\\BE\\internship\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{7CFB61D2-B36F-43FD-B3C3-F4BC8C5B625A}|internship\\internship.csproj|d:\\tttt\\vhec_internship2024_dev4\\be\\internship\\internship\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7CFB61D2-B36F-43FD-B3C3-F4BC8C5B625A}|internship\\internship.csproj|solutionrelative:internship\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7CFB61D2-B36F-43FD-B3C3-F4BC8C5B625A}|internship\\internship.csproj|d:\\tttt\\vhec_internship2024_dev4\\be\\internship\\internship\\controllers\\itemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7CFB61D2-B36F-43FD-B3C3-F4BC8C5B625A}|internship\\internship.csproj|solutionrelative:internship\\controllers\\itemcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\TTTT\\vhec_internship2024_dev4\\BE\\internship\\internship\\Program.cs",
+              "RelativeDocumentMoniker": "internship\\Program.cs",
+              "ToolTip": "D:\\TTTT\\vhec_internship2024_dev4\\BE\\internship\\internship\\Program.cs",
+              "RelativeToolTip": "internship\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAxAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-09T06:14:07.835Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ItemController.cs",
+              "DocumentMoniker": "D:\\TTTT\\vhec_internship2024_dev4\\BE\\internship\\internship\\Controllers\\ItemController.cs",
+              "RelativeDocumentMoniker": "internship\\Controllers\\ItemController.cs",
+              "ToolTip": "D:\\TTTT\\vhec_internship2024_dev4\\BE\\internship\\internship\\Controllers\\ItemController.cs",
+              "RelativeToolTip": "internship\\Controllers\\ItemController.cs",
+              "ViewState": "AQIAAG4AAAAAAAAAAAAwwHMAAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-09T06:03:22.573Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
