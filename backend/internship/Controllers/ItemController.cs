@@ -4,9 +4,11 @@ using internship.Data;
 using internship.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using internship.Services;
 
 namespace internship.Controllers
 {
@@ -16,16 +18,20 @@ namespace internship.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<ItemsController> _logger;
+        private readonly ILogger<ExcelImporter> _excelLogger;
+        private readonly string _connectionString;
 
-        public ItemsController(ApplicationDbContext context, ILogger<ItemsController> logger)
+        public ItemsController(ApplicationDbContext context, ILogger<ItemsController> logger, ILogger<ExcelImporter> excelLogger)
         {
             _context = context;
             _logger = logger;
+            _excelLogger = excelLogger;
+            _connectionString = context.Database.GetDbConnection().ConnectionString;
         }
 
-        // GET: api/Items
+        // GET: api/Items 
         [HttpGet]
-        public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10, int? itemID = null, string itemName = null, decimal? price = null, bool? available = null)
+        public async Task<IActionResult> GetAll(int pageNumber = 1, int pageSize = 10, int? itemID = null, string? itemName = null, decimal? price = null, bool? available = null)
         {
             try
             {
@@ -122,13 +128,16 @@ namespace internship.Controllers
                 return BadRequest("No file uploaded.");
             }
 
+            // Tạo đường dẫn tới thư mục "uploads" trong thư mục "wwwroot" của dự án
             var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
             }
 
             var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
             var filePath = Path.Combine(uploadsFolder, fileName);
 
             using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -155,6 +164,7 @@ namespace internship.Controllers
                 return NotFound();
             }
 
+            // Cập nhật các thuộc tính của item
             item.ItemName = updatedItem.ItemName;
             item.Description = updatedItem.Description;
             item.Price = updatedItem.Price;
@@ -215,12 +225,73 @@ namespace internship.Controllers
                 return NotFound();
             }
 
+            var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", Path.GetFileName(item.ImageUrl));
+            if (System.IO.File.Exists(imagePath))
+            {
+                System.IO.File.Delete(imagePath);
+                _logger.LogInformation($"Image {imagePath} deleted successfully.");
+            }
+
             _context.MenuItems.Remove(item);
             await _context.SaveChangesAsync();
 
             _logger.LogInformation($"Item with ID {id} deleted successfully.");
 
             return NoContent();
+        }
+
+        // GET: api/Items/exportToExcel
+        [HttpGet("ExportToExcel")]
+        public IActionResult ExportToExcel()
+        {
+            List<MenuItemModel> items = _context.MenuItems.ToList();
+
+            string filePath = Path.Combine(Path.GetTempPath(), "Items.xlsx");
+            var excelExporter = new ExcelExporter();
+            excelExporter.ExportToExcel(items, filePath);
+
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+            return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Items.xlsx");
+        }
+
+        // POST: api/Items/importFromExcel
+        [HttpPost("ImportFromExcel")]
+        public IActionResult ImportFromExcel(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("File not selected or empty");
+            }
+
+            string filePath = Path.GetTempFileName();
+
+            try
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving file to temp location.");
+                return StatusCode(500, "Error saving file to temp location");
+            }
+
+            var excelImporter = new ExcelImporter(_excelLogger, _connectionString); // Pass the logger and connection string
+            List<MenuItemModel> items;
+
+            try
+            {
+                items = excelImporter.ImportFromExcel(filePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error importing from Excel");
+                return StatusCode(500, ex.Message); // Return the specific error message
+            }
+
+            return Ok(new { message = "Data imported successfully", itemCount = items.Count });
         }
 
         private bool ItemExists(int id)

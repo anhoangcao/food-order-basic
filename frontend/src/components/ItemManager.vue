@@ -14,12 +14,24 @@
       <div class="btn-row">
         <button @click="openAddModal" class="btn add-btn">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="add-icon">
-            <path
-              d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+            <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
           </svg>
           Add Item
         </button>
+        <input type="file" id="fileInput" @change="handleFileUpload($event, 'import')" ref="fileInputRef" style="display: none;" />
+        <button @click="triggerFileInput" class="btn import-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="import-icon">
+            <path d="M128 64c0-35.3 28.7-64 64-64H352V128c0 17.7 14.3 32 32 32H512V448c0 35.3-28.7 64-64 64H192c-35.3 0-64-28.7-64-64V336H302.1l-39 39c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l80-80c9.4-9.4 9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l39 39H128V64zm0 224v48H24c-13.3 0-24-10.7-24-24s10.7-24 24-24H128zM512 128H384V0L512 128z"/>
+          </svg>
+          Import to Excel
+        </button>
         <button type="submit" class="btn search-btn">Search</button>
+        <button @click="exportToExcel" class="btn export-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="export-icon">
+            <path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V288H216c-13.3 0-24 10.7-24 24s10.7 24 24 24H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zM384 336V288H494.1l-39-39c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l80 80c9.4 9.4 9.4 24.6 0 33.9l-80 80c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l39-39H384zm0-208H256V0L384 128z"/>
+          </svg>
+          Export to Excel
+        </button>
       </div>
     </form>
 
@@ -50,7 +62,6 @@
           <td class="col3">{{ item.description }}</td>
           <td class="col4">{{ item.price }}</td>
           <td class="col5">{{ item.availableDisplay }}</td>
-          <!-- <td class="col6">{{ item.imageUrl }}</td> -->
           <td>
             <img :src="item.imageUrl" alt="Item Image" style="width: 100px; height: auto;" />
           </td>
@@ -110,7 +121,7 @@
             </p>
             <p>
               <strong>Image:</strong>
-              <input type="file" ref="addImageFile" @change="handleFileUpload('add')" class="styled-file-input"
+              <input type="file" ref="addImageFile" @change="handleFileUpload($event, 'add')" class="styled-file-input"
                 accept="image/*" required />
             </p>
             <button type="submit" class="btn save-btn">Add</button>
@@ -169,7 +180,7 @@
             </p>
             <p>
               <strong>Image:</strong>
-              <input type="file" ref="editImageFile" @change="handleFileUpload('edit')" class="styled-file-input"
+              <input type="file" ref="editImageFile" @change="handleFileUpload($event, 'edit')" class="styled-file-input"
                 accept="image/*" />
             </p>
             <button type="submit" class="btn save-btn">Save</button>
@@ -230,6 +241,7 @@ export default {
         available: '',
         imageUrl: ''
       },
+      file: null
     };
   },
   computed: {
@@ -241,7 +253,6 @@ export default {
     }
   },
   methods: {
-
     // Checkbox all
     toggleSelectAll() {
       this.isAllSelected = !this.isAllSelected;
@@ -282,6 +293,117 @@ export default {
       }
     },
 
+    async fetchAllItems() {
+      let allItems = [];
+      let pageNumber = 1;
+      let pageSize = 100;
+      let totalPages = 1;
+
+      try {
+        while (pageNumber <= totalPages) {
+          const response = await axios.get(`https://localhost:44345/api/Items?pageNumber=${pageNumber}&pageSize=${pageSize}`);
+          if (response.data) {
+            allItems = allItems.concat(response.data.items);
+            totalPages = response.data.totalPages;
+            pageNumber++;
+          } else {
+            break;
+          }
+        }
+        return allItems;
+      } catch (error) {
+        console.error('Failed to fetch items:', error);
+        return [];
+      }
+    },
+    async exportToExcel() {
+      try {
+        // Fetch the Excel file from the backend
+        const response = await axios.get('https://localhost:44345/api/Items/ExportToExcel', {
+          responseType: 'blob' // Important for handling binary data
+        });
+
+        // Create a URL for the blob
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'Items.xlsx'); // Specify the file name
+        document.body.appendChild(link);
+        link.click();
+
+        // Cleanup
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Error exporting to Excel:', error);
+      }
+    },
+    triggerFileInput() {
+      const fileInput = this.$refs.fileInputRef;
+      if (fileInput) {
+        fileInput.click();
+      } else {
+        console.error("File input reference is not defined.");
+      }
+    },
+    handleFileUpload(event, mode) {
+      const fileInput = event.target;
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      axios.post('https://localhost:44345/api/Items/UploadImage', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        if (mode === 'add') {
+          this.newItem.imageUrl = response.data.url;
+        } else if (mode === 'edit') {
+          this.editItemData.imageUrl = response.data.url;
+        } else if (mode === 'import') {
+          this.file = file;
+          this.importToExcel();
+        }
+      })
+      .catch(error => {
+        console.error('Error uploading image:', error);
+      });
+    },
+    async importToExcel() {
+      const toast = useToast();
+      if (!this.file) {
+        alert("Please select a file first!");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', this.file);
+
+      try {
+        const response = await axios.post('https://localhost:44345/api/Items/ImportFromExcel', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        if (response.status === 200 && response.data.message) {
+          toast.success('Data imported successfully');
+          this.fetchItems();
+        } else {
+          alert('Failed to import data');
+        }
+      } catch (error) {
+        if (error.response && error.response.data) {
+          console.error('Error importing to Excel:', error.response.data);
+          alert(`Error: ${error.response.data}`);
+        } else {
+          console.error('Error importing to Excel:', error);
+          alert('An error occurred while importing data.');
+        }
+      }
+    },
     // Search items
     searchItems() {
       const params = {};
@@ -331,28 +453,6 @@ export default {
     closeAddModal() {
       console.log('Close Add Modal');
       this.isAddModalOpen = false;
-    },
-    handleFileUpload(mode) {
-      const fileInput = mode === 'add' ? this.$refs.addImageFile : this.$refs.editImageFile;
-      const file = fileInput.files[0];
-      const formData = new FormData();
-      formData.append('file', file);
-
-      axios.post('https://localhost:44345/api/Items/UploadImage', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-        .then(response => {
-          if (mode === 'add') {
-            this.newItem.imageUrl = response.data.url;
-          } else {
-            this.editItemData.imageUrl = response.data.url;
-          }
-        })
-        .catch(error => {
-          console.error('Error uploading image:', error);
-        });
     },
     async addItem() {
       const toast = useToast();
@@ -441,7 +541,7 @@ export default {
       this.editItemData = {};
     },
 
-    // Delete item
+    // Delete Item
     async deleteItem(id) {
       const toast = useToast();
       const confirmed = confirm('Are you sure you want to delete this item?');

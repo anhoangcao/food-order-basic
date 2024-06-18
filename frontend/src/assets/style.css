@@ -363,6 +363,8 @@ button {
 }
 
 .search-btn {
+  position: relative;
+  right: -18.5%;
   background-color: #007bff;
   color: #ffffff;
   margin: 0 0 10px 0;
@@ -427,6 +429,46 @@ td button.action-button:hover {
 }
 
 .add-icon {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  fill: #ffffff;
+}
+
+.import-btn {
+  position: relative;
+  right: 18.5%;
+  background-color: #28a745;
+  color: #ffffff;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.import-btn:hover {
+  background-color: #4fad64;
+}
+
+.import-icon {
+  width: 15px;
+  height: 15px;
+  margin-right: 8px;
+  fill: #ffffff;
+}
+
+.export-btn {
+  background-color: #007bff;
+  color: #ffffff;
+  margin: 0 0 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.export-btn:hover {
+  background-color: #419bfc;
+}
+
+.export-icon {
   width: 15px;
   height: 15px;
   margin-right: 5px;

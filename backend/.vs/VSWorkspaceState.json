@@ -1,7 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\internship"
+    "\\internship",
+    "\\internship\\Controllers",
+    "\\internship\\Data",
+    "\\internship\\Models",
+    "\\internship\\Services"
   ],
   "SelectedNode": "\\internship.sln",
   "PreviewInSolutionExplorer": false
